@@ -1,4 +1,5 @@
 /*!
+ * Remerge GmbH Fork
  * jQuery QueryBuilder
  * Copyright 2014 Damien "Mistic" Sorel (http://www.strangeplanet.fr)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
@@ -18,7 +19,9 @@
             'double',
             'date',
             'time',
-            'datetime'
+            'datetime',
+            'money',
+            'duration'
         ],
         internalTypes = [
             'string',
@@ -149,11 +152,11 @@
         ],
 
         icons: {
-            add_group: 'glyphicon glyphicon-plus-sign',
-            add_rule: 'glyphicon glyphicon-plus',
-            remove_group: 'glyphicon glyphicon-remove',
-            remove_rule: 'glyphicon glyphicon-remove',
-            sort: 'glyphicon glyphicon-sort'
+            add_group: 'icon-add',
+            add_rule: 'icon-add',
+            remove_group: 'icon-close',
+            remove_rule: 'icon-close',
+            sort: 'icon-import-export'
         }
     };
 
@@ -473,6 +476,12 @@
                 case 'date': case 'time': case 'datetime':
                     filter.internalType = 'datetime';
                     break;
+                case 'money':
+                    filter.internalType = 'number';
+                    break;
+                case 'duration':
+                    filter.internalType = 'string';
+                    break;
             }
 
             switch (filter.input) {
@@ -591,6 +600,7 @@
             $operatorSelect = $(this.getRuleOperatorSelect($rule.attr('id'), operators));
 
         $operatorContainer.html($operatorSelect);
+        $operatorSelect.selectize();
 
         $rule.data('queryBuilder.operator', operators[0]);
 
@@ -1277,7 +1287,10 @@
      * @return {string}
      */
     QueryBuilder.prototype.getRuleOperatorSelect = function(rule_id, operators) {
-        var h = '<select name="'+ rule_id +'_operator">';
+
+
+
+        var h = '<select name="'+ rule_id +'_operator" >';
 
         for (var i=0, l=operators.length; i<l; i++) {
             var label = this.lang['operator_'+operators[i].type] || operators[i].type;
