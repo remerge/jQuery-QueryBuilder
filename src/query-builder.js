@@ -184,7 +184,6 @@
         this.$el.on('change.queryBuilder', '.rule-filter-container select[name$=_filter]', function() {
             var $this = $(this),
                 $rule = $this.closest('.rule-container');
-
             that.updateRuleFilter($rule, $this.val());
         });
 
@@ -238,6 +237,7 @@
         this.$el.addClass('query-builder');
 
         if (options.rules) {
+            console.log("regeln gefunden");
             this.setRules(options.rules);
         }
         else {
@@ -306,7 +306,7 @@
                     if (filterId == '-1') {
                         continue;
                     }
-
+                    console.log("call get filter");
                     var filter = that.getFilterById(filterId),
                         operator = that.getOperatorByType(that.getRuleOperator($rule)),
                         value = null;
@@ -364,7 +364,7 @@
      */
     QueryBuilder.prototype.setRules = function(data) {
         this.clear();
-
+        console.log(data);
         if (!data || !data.rules || data.rules.length===0) {
             $.error('Incorrect data object passed');
         }
@@ -406,13 +406,16 @@
                     if (rule.operator === undefined) {
                         rule.operator = 'equal';
                     }
-
+                    console.log(rule.id);
                     var $rule = that.addRule($ul),
                         filter = that.getFilterById(rule.id),
-                        operator = that.getOperatorByType(rule.operator);
+                        //modified by remerge
+                        operator = that.getOperatorByValue(rule.operator);
 
+                    console.log("before:"+operator.type);
                     $rule.find('.rule-filter-container select[name$=_filter]').val(rule.id).trigger('change');
-                    $rule.find('.rule-operator-container select[name$=_operator]').val(rule.operator).trigger('change');
+                    console.log("danach");
+                    $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
 
                     if (operator.accept_values !== 0) {
                         that.setRuleValue($rule, rule, filter, operator);
@@ -591,7 +594,7 @@
         $rule.find('.rule-filter-container').append($filterSelect);
 
         if ($.fn.selectize) {
-            $filterSelect.selectize();
+            //$filterSelect.selectize();
         }
         if ($.fn.selectpicker) {
             $filterSelect.selectpicker({
@@ -627,7 +630,7 @@
         $operatorContainer.html($operatorSelect);
 
         if ($.fn.selectize) {
-            $operatorSelect.selectize();
+            //$operatorSelect.selectize();
         };
         $rule.data('queryBuilder.operator', operators[0]);
 
@@ -687,7 +690,7 @@
      */
     QueryBuilder.prototype.updateRuleFilter = function($rule, filterId) {
         var filter = filterId != '-1' ? this.getFilterById(filterId) : null;
-
+        console.log(filter);
         this.createRuleOperators($rule, filter);
         this.createRuleInput($rule, filter);
 
@@ -1062,6 +1065,20 @@
     };
 
     /**
+     * Return a particular operator by its value
+     * @param value {string}
+     * @return {object}
+     */
+    QueryBuilder.prototype.getOperatorByValue = function(value) {
+        for (var i=0, l=this.operators.length; i<l; i++) {
+            if (this.operators[i].value == value) {
+                return this.operators[i];
+            }
+        }
+
+        throw 'Undefined operator: '+ value;
+    };
+    /**
      * Return a particular operator by its type
      * @param type {string}
      * @return {object}
@@ -1157,7 +1174,7 @@
      */
     QueryBuilder.prototype.setRuleValue = function($rule, rule, filter, operator) {
         filter = filter || this.getFilterById(this.getRuleFilter($rule));
-        operator = operator || this.getOperatorByType(this.getRuleOperator($rule));
+        operator = operator || this.getOperatorByValue(this.getRuleOperator($rule));
 
         var $value = $rule.find('.rule-value-container'),
             val;
