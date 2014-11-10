@@ -14,8 +14,8 @@
     },
     "require": {
         "yiisoft/jquery": "2.* | 1.9.*",
-        "moment/moment": "dev-master",
-        "twbs/bootstrap": "3.2.*@dev"
+        "moment/moment": "dev-master"
+
     },
     "license": "MIT"
-} 
+}

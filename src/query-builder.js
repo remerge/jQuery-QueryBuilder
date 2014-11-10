@@ -15,7 +15,7 @@
     // ===============================
     var types = [
             'string',
-            'integer',
+            'int',
             'double',
             'date',
             'time',
@@ -108,7 +108,7 @@
 
             filter_select_placeholder: '------',
 
-            operator_equal: 'equal',
+            operator_equal: '=',
             operator_not_equal: 'not equal',
             operator_in: 'in',
             operator_not_in: 'not in',
@@ -130,32 +130,32 @@
         },
 
         operators: [
-            {type: 'equal',            accept_values: 1, apply_to: ['string', 'number', 'datetime']},
-            {type: 'not_equal',        accept_values: 1, apply_to: ['string', 'number', 'datetime']},
-            {type: 'in',               accept_values: 1, apply_to: ['string', 'number', 'datetime']},
-            {type: 'not_in',           accept_values: 1, apply_to: ['string', 'number', 'datetime']},
-            {type: 'less',             accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'less_or_equal',    accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'greater',          accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'greater_or_equal', accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'between',          accept_values: 2, apply_to: ['number', 'datetime']},
-            {type: 'begins_with',      accept_values: 1, apply_to: ['string']},
-            {type: 'not_begins_with',  accept_values: 1, apply_to: ['string']},
-            {type: 'contains',         accept_values: 1, apply_to: ['string']},
-            {type: 'not_contains',     accept_values: 1, apply_to: ['string']},
-            {type: 'ends_with',        accept_values: 1, apply_to: ['string']},
-            {type: 'not_ends_with',    accept_values: 1, apply_to: ['string']},
-            {type: 'is_empty',         accept_values: 0, apply_to: ['string']},
-            {type: 'is_not_empty',     accept_values: 0, apply_to: ['string']},
-            {type: 'is_null',          accept_values: 0, apply_to: ['string', 'number', 'datetime']},
-            {type: 'is_not_null',      accept_values: 0, apply_to: ['string', 'number', 'datetime']}
+            {type: 'equal',            value: '=',      accept_values: 1, apply_to: ['string', 'number', 'datetime']},
+            {type: 'not_equal',        value: '!=',     accept_values: 1, apply_to: ['string', 'number', 'datetime']},
+            {type: 'in',               value: 'in',     accept_values: 1, apply_to: ['string', 'number', 'datetime']},
+            {type: 'not_in',           value: 'notin',  accept_values: 1, apply_to: ['string', 'number', 'datetime']},
+            {type: 'less',             value: '<',      accept_values: 1, apply_to: ['number', 'datetime']},
+            {type: 'less_or_equal',    value: '<=',     accept_values: 1, apply_to: ['number', 'datetime']},
+            {type: 'greater',          value: '>',      accept_values: 1, apply_to: ['number', 'datetime']},
+            {type: 'greater_or_equal', value: '>=',     accept_values: 1, apply_to: ['number', 'datetime']},
+            {type: 'between',          value: '<>',     accept_values: 2, apply_to: ['number', 'datetime']},
+            {type: 'begins_with',      value: '^',      accept_values: 1, apply_to: ['string']},
+            {type: 'not_begins_with',  value: '!^',     accept_values: 1, apply_to: ['string']},
+            {type: 'contains',         value: '//',     accept_values: 1, apply_to: ['string']},
+            {type: 'not_contains',     value: '!//',    accept_values: 1, apply_to: ['string']},
+            {type: 'ends_with',        value: '$',      accept_values: 1, apply_to: ['string']},
+            {type: 'not_ends_with',    value: '!$',     accept_values: 1, apply_to: ['string']},
+            {type: 'is_empty',         value: '[]',     accept_values: 0, apply_to: ['string']},
+            {type: 'is_not_empty',     value: '![]',    accept_values: 0, apply_to: ['string']},
+            {type: 'is_null',          value: '?',      accept_values: 0, apply_to: ['string', 'number', 'datetime']},
+            {type: 'is_not_null',      value: '!?',     accept_values: 0, apply_to: ['string', 'number', 'datetime']}
         ],
 
         icons: {
             add_group: 'icon-add',
             add_rule: 'icon-add',
             remove_group: 'icon-close',
-            remove_rule: 'icon-close',
+            remove_rule: 'icon-delete',
             sort: 'icon-import-export'
         }
     };
@@ -328,9 +328,10 @@
                     rule = {
                         id: filter.id,
                         field: filter.field,
-                        type: filter.type,
+                        lftHandType: filter.lftHandType,
+                        rgtHandType: filter.type,
                         input: filter.input,
-                        operator: operator.type,
+                        operator: operator.value,
                         value: value
                     };
 
@@ -452,6 +453,13 @@
                 $.error('Invalid type: '+ filter.type);
             }
 
+            if (!filter.lftHandType) {
+                $.error('Missing filter type: '+ filter.id);
+            }
+            if (types.indexOf(filter.lftHandType) == -1) {
+                $.error('Invalid type: '+ filter.lftHandType);
+            }
+
             if (!filter.input) {
                 filter.input = 'text';
             }
@@ -470,7 +478,7 @@
                 case 'string':
                     filter.internalType = 'string';
                     break;
-                case 'integer': case 'double':
+                case 'int': case 'double':
                     filter.internalType = 'number';
                     break;
                 case 'date': case 'time': case 'datetime':
@@ -565,9 +573,26 @@
             $rule = $(this.template.rule.call(this, rule_id)),
             $filterSelect = $(this.getRuleFilterSelect(rule_id));
 
+// .selectize
+//       options: @get("options")
+//       optgroups: @get("optgroups")
+//       optgroupOrder:  @get("optgrouporder")
+//       plugins: ['drag_drop','remove_button','optgroup_columns']
+//       labelField: "label"
+//       sortField: @get("sort")
+//       valueField: "value"
+//       searchField: "label"
+//       optgroupField: 'grp'
+//       optgroupLabelField: 'label'
+//       optgroupValueField: 'value'
+
+
         container.append($rule);
         $rule.find('.rule-filter-container').append($filterSelect);
 
+        if ($.fn.selectize) {
+            $filterSelect.selectize();
+        }
         if ($.fn.selectpicker) {
             $filterSelect.selectpicker({
                 container: 'body',
@@ -600,8 +625,10 @@
             $operatorSelect = $(this.getRuleOperatorSelect($rule.attr('id'), operators));
 
         $operatorContainer.html($operatorSelect);
-        $operatorSelect.selectize();
 
+        if ($.fn.selectize) {
+            $operatorSelect.selectize();
+        };
         $rule.data('queryBuilder.operator', operators[0]);
 
         if ($.fn.selectpicker) {
@@ -1194,12 +1221,6 @@
 <dl id="'+ group_id +'" class="rules-group-container" '+ (this.settings.sortable ? 'draggable="true"' : '') +'> \
   <dt class="rules-group-header"> \
     <div> \
-      <button type="button" data-add="rule"> \
-        <i class="' + this.settings.icons.add_rule + '"></i> '+ this.lang.add_rule +' \
-      </button> \
-      '+ (this.settings.allow_groups ? '<button type="button" data-add="group"> \
-        <i class="' + this.settings.icons.add_group + '"></i> '+ this.lang.add_group +' \
-      </button>' : '') +' \
       '+ (!main ? '<button type="button" data-delete="group"> \
         <i class="' + this.settings.icons.remove_group + '"></i> '+ this.lang.delete_group +' \
       </button>' : '') +' \
@@ -1212,6 +1233,12 @@
   <dd class=rules-group-body> \
     <ul class=rules-list></ul> \
   </dd> \
+   <button type="button" data-add="rule"> \
+        <i class="' + this.settings.icons.add_rule + '"></i> '+ this.lang.add_rule +' \
+      </button> \
+      '+ (this.settings.allow_groups ? '<button type="button" data-add="group"> \
+        <i class="' + this.settings.icons.add_group + '"></i> '+ this.lang.add_group +' \
+      </button>' : '') +' \
 </dl>';
 
         return h;
@@ -1250,7 +1277,7 @@
   <div class="rule-header"> \
     <div> \
       <button type="button" data-delete="rule"> \
-        <i class="' + this.settings.icons.remove_rule + '"></i> '+ this.lang.delete_rule +' \
+        <i class="' + this.settings.icons.remove_rule + '"></i> \
       </button> \
     </div> \
   </div> \
