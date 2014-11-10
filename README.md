@@ -1,17 +1,18 @@
 # jQuery QueryBuilder
 
 [![Bower version](https://badge.fury.io/bo/jQuery-QueryBuilder.svg)](http://badge.fury.io/bo/jQuery-QueryBuilder)
-
+remerge gmbH Fork
 jQuery plugin offering an interface to create complex queries.
 
 ## Documentation
 http://mistic100.github.io/jQuery-QueryBuilder
 
 ### Requirements
- * Bootstrap 3.x CSS
+
  * jQuery >= 1.9
  * (optional) MomentJS
  * (optional) any widgets library like jQuery UI
+ * (optional) selectize >= 0.11.2
 
 ### Browser support
  * Internet Explorer >= 10
