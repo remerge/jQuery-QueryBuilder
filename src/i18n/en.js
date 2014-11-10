@@ -4,9 +4,9 @@
  */
 
 jQuery.fn.queryBuilder.defaults.set({ lang: {
-  "add_rule": "Add rule",
+  "add_rule": "+",
   "add_group": "Add group",
-  "delete_rule": "Delete",
+  "delete_rule": "X",
   "delete_group": "Delete",
 
   "condition_and": "AND",
@@ -14,15 +14,15 @@ jQuery.fn.queryBuilder.defaults.set({ lang: {
 
   "filter_select_placeholder": "------",
 
-  "operator_equal": "equal",
-  "operator_not_equal": "not equal",
+  "operator_equal": "=",
+  "operator_not_equal": "!=",
   "operator_in": "in",
   "operator_not_in": "not in",
-  "operator_less": "less",
-  "operator_less_or_equal": "less or equal",
+  "operator_less": "<",
+  "operator_less_or_equal": "<=",
   "operator_greater": "greater",
-  "operator_greater_or_equal": "greater or equal",
-  "operator_between": "between",
+  "operator_greater_or_equal": ">=",
+  "operator_between": "<>",
   "operator_begins_with": "begins with",
   "operator_not_begins_with": "doesn't begin with",
   "operator_contains": "contains",

@@ -571,7 +571,7 @@
         if ($.fn.selectpicker) {
             $filterSelect.selectpicker({
                 container: 'body',
-                style: 'btn-inverse btn-xs',
+                //style: 'btn-inverse btn-xs',
                 width: 'auto',
                 showIcon: false
             });
@@ -607,7 +607,7 @@
         if ($.fn.selectpicker) {
             $operatorSelect.selectpicker({
               container: 'body',
-              style: 'btn-inverse btn-xs',
+              //style: 'btn-inverse btn-xs',
               width: 'auto',
               showIcon: false
             });
@@ -1193,18 +1193,18 @@
         var h = '\
 <dl id="'+ group_id +'" class="rules-group-container" '+ (this.settings.sortable ? 'draggable="true"' : '') +'> \
   <dt class="rules-group-header"> \
-    <div class="btn-group pull-right"> \
-      <button type="button" class="btn btn-xs btn-success" data-add="rule"> \
+    <div> \
+      <button type="button" data-add="rule"> \
         <i class="' + this.settings.icons.add_rule + '"></i> '+ this.lang.add_rule +' \
       </button> \
-      '+ (this.settings.allow_groups ? '<button type="button" class="btn btn-xs btn-success" data-add="group"> \
+      '+ (this.settings.allow_groups ? '<button type="button" data-add="group"> \
         <i class="' + this.settings.icons.add_group + '"></i> '+ this.lang.add_group +' \
       </button>' : '') +' \
-      '+ (!main ? '<button type="button" class="btn btn-xs btn-danger" data-delete="group"> \
+      '+ (!main ? '<button type="button" data-delete="group"> \
         <i class="' + this.settings.icons.remove_group + '"></i> '+ this.lang.delete_group +' \
       </button>' : '') +' \
     </div> \
-    <div class="btn-group"> \
+    <div> \
       '+ this.getGroupConditions(group_id) +' \
     </div> \
     '+ (this.settings.sortable && !main ? '<div class="drag-handle"><i class="' + this.settings.icons.sort + '"></i></div>' : '') +' \
@@ -1231,7 +1231,7 @@
                 label = this.lang['condition_'+ cond.toLowerCase()] || cond;
 
             h+= '\
-            <label class="btn btn-xs btn-primary '+ (active?'active':'') +'"> \
+            <label '+ (active?'active':'') +'"> \
               <input type="radio" name="'+ group_id +'_cond" value="'+ cond +'" '+ (active?'checked':'') +'> '+ label +' \
             </label>';
         }
@@ -1248,8 +1248,8 @@
         var h = '\
 <li id="'+ rule_id +'" class="rule-container" '+ (this.settings.sortable ? 'draggable="true"' : '') +'> \
   <div class="rule-header"> \
-    <div class="btn-group pull-right"> \
-      <button type="button" class="btn btn-xs btn-danger" data-delete="rule"> \
+    <div> \
+      <button type="button" data-delete="rule"> \
         <i class="' + this.settings.icons.remove_rule + '"></i> '+ this.lang.delete_rule +' \
       </button> \
     </div> \
