@@ -108,7 +108,7 @@
 
             filter_select_placeholder: '------',
 
-            operator_equal: '=',
+            operator_equal: 'equal',
             operator_not_equal: 'not equal',
             operator_in: 'in',
             operator_not_in: 'not in',
@@ -237,7 +237,6 @@
         this.$el.addClass('query-builder');
 
         if (options.rules) {
-            console.log("regeln gefunden");
             this.setRules(options.rules);
         }
         else {
@@ -306,7 +305,6 @@
                     if (filterId == '-1') {
                         continue;
                     }
-                    console.log("call get filter");
                     var filter = that.getFilterById(filterId),
                         operator = that.getOperatorByType(that.getRuleOperator($rule)),
                         value = null;
@@ -364,7 +362,6 @@
      */
     QueryBuilder.prototype.setRules = function(data) {
         this.clear();
-        console.log(data);
         if (!data || !data.rules || data.rules.length===0) {
             $.error('Incorrect data object passed');
         }
@@ -406,15 +403,14 @@
                     if (rule.operator === undefined) {
                         rule.operator = 'equal';
                     }
-                    console.log(rule.id);
+
+
+                    rule.operator = that.getOperatorByValue(rule.operator);
                     var $rule = that.addRule($ul),
                         filter = that.getFilterById(rule.id),
-                        //modified by remerge
-                        operator = that.getOperatorByValue(rule.operator);
+                        operator = that.getOperatorByType(rule.operator);
 
-                    console.log("before:"+operator.type);
                     $rule.find('.rule-filter-container select[name$=_filter]').val(rule.id).trigger('change');
-                    console.log("danach");
                     $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
 
                     if (operator.accept_values !== 0) {
@@ -690,7 +686,6 @@
      */
     QueryBuilder.prototype.updateRuleFilter = function($rule, filterId) {
         var filter = filterId != '-1' ? this.getFilterById(filterId) : null;
-        console.log(filter);
         this.createRuleOperators($rule, filter);
         this.createRuleInput($rule, filter);
 
@@ -1064,19 +1059,18 @@
         throw 'Undefined filter: '+ filterId;
     };
 
-    /**
-     * Return a particular operator by its value
-     * @param value {string}
+  /**
+     * Return a particular operator by its type
+     * @param type {string}
      * @return {object}
      */
     QueryBuilder.prototype.getOperatorByValue = function(value) {
         for (var i=0, l=this.operators.length; i<l; i++) {
             if (this.operators[i].value == value) {
-                return this.operators[i];
+                return this.operators[i].type;
             }
         }
-
-        throw 'Undefined operator: '+ value;
+         throw 'Undefined operator: '+ value;
     };
     /**
      * Return a particular operator by its type
@@ -1174,8 +1168,7 @@
      */
     QueryBuilder.prototype.setRuleValue = function($rule, rule, filter, operator) {
         filter = filter || this.getFilterById(this.getRuleFilter($rule));
-        operator = operator || this.getOperatorByValue(this.getRuleOperator($rule));
-
+        operator = operator || this.getOperatorByType(this.getRuleOperator($rule));
         var $value = $rule.find('.rule-value-container'),
             val;
 
@@ -1204,7 +1197,8 @@
                     break;
 
                 case 'select':
-                    $value.find('select[name='+ name +']').val(val[i]).trigger('change');
+                    var selectElement = $value.find('select[name='+ name +']');
+                        $value.find('input[name='+ name +']').val(val[i]).trigger('change');
                     break;
 
                 /* falls through */
