@@ -362,7 +362,7 @@
      */
     QueryBuilder.prototype.setRules = function(data) {
         this.clear();
-        if (!data || !data.rules || data.rules.length===0) {
+        if (!data || !data.rules) {
             $.error('Incorrect data object passed');
         }
 
