@@ -217,7 +217,7 @@
         this.$el.on('click.queryBuilder', '[data-delete=rule]', function() {
             var $this = $(this),
                 $rule = $this.closest('.rule-container');
-
+            $( document ).trigger( 'removeRule', $rule.attr('id'));
             $rule.remove();
         });
 
@@ -298,8 +298,8 @@
             for (var i=0, l=$elements.length; i<l; i++) {
                 var $rule = $elements.eq(i),
                     rule;
-
                 if ($rule.hasClass('rule-container')) {
+
                     var filterId = that.getRuleFilter($rule);
 
                     if (filterId == '-1') {
@@ -324,7 +324,8 @@
                     }
 
                     rule = {
-                        id: filter.id,
+                        id: $rule.attr('id'),
+                        filter: filter.id,
                         field: filter.field,
                         lftHandType: filter.lftHandType,
                         rgtHandType: filter.type,
@@ -397,6 +398,9 @@
                     if (rule.id === undefined) {
                         $.error('Missing rule field id');
                     }
+                    if (rule.filter === undefined) {
+                        $.error('Missing rule field filter');
+                    }
                     if (rule.value === undefined) {
                         rule.value = '';
                     }
@@ -406,11 +410,11 @@
 
 
                     rule.operator = that.getOperatorByValue(rule.operator);
-                    var $rule = that.addRule($ul),
-                        filter = that.getFilterById(rule.id),
+                    var $rule = that.addRule($ul,rule.id),
+                        filter = that.getFilterById(rule.filter),
                         operator = that.getOperatorByType(rule.operator);
 
-                    $rule.find('.rule-filter-container select[name$=_filter]').val(rule.id).trigger('change');
+                    $rule.find('.rule-filter-container select[name$=_filter]').val(rule.filter).trigger('change');
                     $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
 
                     if (operator.accept_values !== 0) {
@@ -567,23 +571,16 @@
      * @param container {jQuery} (parent <ul>)
      * @return $rule {jQuery}
      */
-    QueryBuilder.prototype.addRule = function(container) {
-        var rule_id = this.nextRuleId(),
-            $rule = $(this.template.rule.call(this, rule_id)),
+    QueryBuilder.prototype.addRule = function(container,ruleId) {
+        var rule_id;
+        if (ruleId === undefined || ruleId === null){
+            rule_id = this.nextRuleId();
+        }
+        else {
+            rule_id = ruleId;
+        }
+        var $rule = $(this.template.rule.call(this, rule_id)),
             $filterSelect = $(this.getRuleFilterSelect(rule_id));
-
-// .selectize
-//       options: @get("options")
-//       optgroups: @get("optgroups")
-//       optgroupOrder:  @get("optgrouporder")
-//       plugins: ['drag_drop','remove_button','optgroup_columns']
-//       labelField: "label"
-//       sortField: @get("sort")
-//       valueField: "value"
-//       searchField: "label"
-//       optgroupField: 'grp'
-//       optgroupLabelField: 'label'
-//       optgroupValueField: 'value'
 
 
         container.append($rule);
@@ -761,12 +758,12 @@
 
                 case 'select':
                     if (filter.multiple) {
-                        if (val[i].length === 0) {
+                        if (val[i].length === 0 || val[i] === undefined) {
                             return 'select_empty';
                         }
                     }
                     else {
-                        if (val[i] === undefined) {
+                        if (val[i].length === 0 || val[i] === undefined) {
                             return 'select_empty';
                         }
                     }
