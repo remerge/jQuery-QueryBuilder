@@ -15,13 +15,15 @@
     // ===============================
     var types = [
             'string',
+            'string[]',
             'int',
             'double',
             'date',
             'time',
             'datetime',
             'money',
-            'duration'
+            'duration',
+            'dynamic'
         ],
         internalTypes = [
             'string',
@@ -478,7 +480,7 @@
             }
 
             switch (filter.type) {
-                case 'string':
+                case 'string': case 'string[]':
                     filter.internalType = 'string';
                     break;
                 case 'int': case 'double':
