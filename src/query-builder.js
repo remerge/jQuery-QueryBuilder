@@ -17,6 +17,7 @@
             'string',
             'string[]',
             'int',
+            'int[]',
             'double',
             'date',
             'time',
@@ -483,7 +484,7 @@
                 case 'string': case 'string[]':
                     filter.internalType = 'string';
                     break;
-                case 'int': case 'double':
+                case 'int': case 'int[]': case 'double':
                     filter.internalType = 'number';
                     break;
                 case 'date': case 'time': case 'datetime':
