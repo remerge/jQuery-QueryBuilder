@@ -17,7 +17,7 @@
   ],
   "dependencies" : {
     "jquery": ">= 1.9.0",
-    "selectize": "~0.11.2",
+    "selectize": "remerge/selectize.js#9aa6861a72b6b2e25121bc92b2ca12712abb7a61",
     "momentjs": "^2.6.0"
   },
   "keywords": [
