@@ -115,6 +115,8 @@
             operator_not_equal: 'not equal',
             operator_in: 'in',
             operator_not_in: 'not in',
+            operator_before: 'before',
+            operator_after: 'after',
             operator_less: 'less',
             operator_less_or_equal: 'less or equal',
             operator_greater: 'greater',
@@ -137,10 +139,12 @@
             {type: 'not_equal',        value: '!=',     accept_values: 1, apply_to: ['string', 'number', 'datetime']},
             {type: 'in',               value: 'in',     accept_values: 1, apply_to: ['string', 'number', 'datetime']},
             {type: 'not_in',           value: 'notin',  accept_values: 1, apply_to: ['string', 'number', 'datetime']},
-            {type: 'less',             value: '<',      accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'less_or_equal',    value: '<=',     accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'greater',          value: '>',      accept_values: 1, apply_to: ['number', 'datetime']},
-            {type: 'greater_or_equal', value: '>=',     accept_values: 1, apply_to: ['number', 'datetime']},
+            {type: 'less',             value: '<',      accept_values: 1, apply_to: ['number']},
+            {type: 'before',           value: '<',      accept_values: 1, apply_to: ['string', 'datetime']},
+            {type: 'less_or_equal',    value: '<=',     accept_values: 1, apply_to: ['number']},
+            {type: 'greater',          value: '>',      accept_values: 1, apply_to: ['number']},
+            {type: 'after',            value: '>',      accept_values: 1, apply_to: ['string', 'datetime']},
+            {type: 'greater_or_equal', value: '>=',     accept_values: 1, apply_to: ['number']},
             {type: 'between',          value: '<>',     accept_values: 2, apply_to: ['number', 'datetime']},
             {type: 'begins_with',      value: '^',      accept_values: 1, apply_to: ['string']},
             {type: 'not_begins_with',  value: '!^',     accept_values: 1, apply_to: ['string']},
@@ -411,15 +415,19 @@
                         rule.operator = 'equal';
                     }
 
-
-                    rule.operator = that.getOperatorByValue(rule.operator);
+                    rule.operator = that.getOperatorByValue(rule.operator,that.getFilterById(rule.filter));
                     var $rule = that.addRule($ul,rule.id),
                         filter = that.getFilterById(rule.filter),
                         operator = that.getOperatorByType(rule.operator);
-
-                    $rule.find('.rule-filter-container select[name$=_filter]').val(rule.filter).trigger('change');
-                    $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
-
+                    if ($.fn.selectize) {
+                      $rule.find('.rule-filter-container select[name$=_filter]').val(rule.filter).trigger('change');
+                      $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
+                    }
+                    else
+                    {
+                      $rule.find('.rule-filter-container select[name$=_filter]').val(rule.filter).trigger('change');
+                      $rule.find('.rule-operator-container select[name$=_operator]').val(operator.type).trigger('change');
+                    }
                     if (operator.accept_values !== 0) {
                         that.setRuleValue($rule, rule, filter, operator);
                     }
@@ -589,9 +597,9 @@
         container.append($rule);
         $rule.find('.rule-filter-container').append($filterSelect);
 
-        if ($.fn.selectize) {
-            //$filterSelect.selectize();
-        }
+        // if ($.fn.selectize) {
+        //     $filterSelect.selectize();
+        // }
         if ($.fn.selectpicker) {
             $filterSelect.selectpicker({
                 container: 'body',
@@ -1058,19 +1066,20 @@
 
         throw 'Undefined filter: '+ filterId;
     };
-
   /**
      * Return a particular operator by its type
      * @param type {string}
      * @return {object}
      */
-    QueryBuilder.prototype.getOperatorByValue = function(value) {
+    QueryBuilder.prototype.getOperatorByValue = function(value,filter) {
         for (var i=0, l=this.operators.length; i<l; i++) {
             if (this.operators[i].value == value) {
-                return this.operators[i].type;
+                if (this.operators[i].apply_to.indexOf(filter.internalType) >= 0){
+                  return this.operators[i].type;
+                }
             }
         }
-         throw 'Undefined operator: '+ value;
+         throw 'Undefined operator by Value: !!'+ value;
     };
     /**
      * Return a particular operator by its type
@@ -1084,7 +1093,7 @@
             }
         }
 
-        throw 'Undefined operator: '+ type;
+        throw 'Undefined operator by Type: '+ type;
     };
 
     /**
