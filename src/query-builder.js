@@ -474,9 +474,9 @@
             if (!filter.lftHandType) {
                 $.error('Missing filter type: '+ filter.id);
             }
-            if (types.indexOf(filter.lftHandType) == -1) {
-                $.error('Invalid type: '+ filter.lftHandType);
-            }
+            // if (types.indexOf(filter.lftHandType) == -1) {
+            //     $.error('Invalid type: '+ filter.lftHandType);
+            // }
 
             if (!filter.input) {
                 filter.input = 'text';
