@@ -160,8 +160,8 @@
             {type: 'not_ends_with',    value: '!$',     accept_values: 1, apply_to: ['string']},
             {type: 'is_empty',         value: '[]',     accept_values: 0, apply_to: ['string']},
             {type: 'is_not_empty',     value: '![]',    accept_values: 0, apply_to: ['string']},
-            {type: 'presence',         value: '[]',     accept_values: 1, apply_to: ['string']},
-            {type: 'absence',          value: '![]',    accept_values: 1, apply_to: ['string']},
+            {type: 'presence',         value: '[[]]',     accept_values: 1, apply_to: ['string']},
+            {type: 'absence',          value: '![[]]',    accept_values: 1, apply_to: ['string']},
             {type: 'is_null',          value: '?',      accept_values: 0, apply_to: ['string', 'number', 'datetime']},
             {type: 'is_not_null',      value: '!?',     accept_values: 0, apply_to: ['string', 'number', 'datetime']}
         ],
