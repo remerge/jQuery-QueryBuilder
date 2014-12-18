@@ -132,6 +132,8 @@
             operator_not_ends_with: 'doesn\'t end with',
             operator_is_empty: 'is empty',
             operator_is_not_empty: 'is not empty',
+            operator_presence: 'is empty',
+            operator_absence: 'is not empty',
             operator_is_null: 'is null',
             operator_is_not_null: 'is not null'
         },
@@ -158,6 +160,8 @@
             {type: 'not_ends_with',    value: '!$',     accept_values: 1, apply_to: ['string']},
             {type: 'is_empty',         value: '[]',     accept_values: 0, apply_to: ['string']},
             {type: 'is_not_empty',     value: '![]',    accept_values: 0, apply_to: ['string']},
+            {type: 'presence',         value: '[]',     accept_values: 1, apply_to: ['string']},
+            {type: 'absence',          value: '![]',    accept_values: 1, apply_to: ['string']},
             {type: 'is_null',          value: '?',      accept_values: 0, apply_to: ['string', 'number', 'datetime']},
             {type: 'is_not_null',      value: '!?',     accept_values: 0, apply_to: ['string', 'number', 'datetime']}
         ],
