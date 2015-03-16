@@ -117,6 +117,8 @@
             operator_not_in: 'not in',
             operator_before: 'before',
             operator_after: 'after',
+            operator_before_gen: 'before',
+            operator_after_gen: 'after',
             operator_less: 'less',
             operator_less_or_equal: 'less or equal',
             operator_greater: 'greater',
@@ -147,9 +149,11 @@
             {type: 'not_in',           value: 'notin',   accept_values: 1, apply_to: ['string', 'number', 'datetime']},
             {type: 'less',             value: '<',       accept_values: 1, apply_to: ['number']},
             {type: 'before',           value: '<',       accept_values: 1, apply_to: ['string', 'datetime']},
+            {type: 'before_gen',       value: '<<',      accept_values: 2, apply_to: ['string']},
             {type: 'less_or_equal',    value: '<=',      accept_values: 1, apply_to: ['number']},
             {type: 'greater',          value: '>',       accept_values: 1, apply_to: ['number']},
             {type: 'after',            value: '>',       accept_values: 1, apply_to: ['string', 'datetime']},
+            {type: 'after_gen',        value: '>>',      accept_values: 2, apply_to: ['string']},
             {type: 'greater_or_equal', value: '>=',      accept_values: 1, apply_to: ['number']},
             {type: 'between',          value: '<>',      accept_values: 2, apply_to: ['number', 'datetime']},
             {type: 'match',            value: '<>',      accept_values: 2, apply_to: ['string']},
@@ -165,7 +169,7 @@
             {type: 'presence',         value: '[[]]',    accept_values: 1, apply_to: ['string']},
             {type: 'absence',          value: '![[]]',   accept_values: 1, apply_to: ['string']},
             {type: 'listed',           value: '[in]',    accept_values: 2, apply_to: ['string']},
-            {type: 'not_listed',       value: '![in]', accept_values: 2, apply_to: ['string']},
+            {type: 'not_listed',       value: '![in]',   accept_values: 2, apply_to: ['string']},
             {type: 'is_null',          value: '?',       accept_values: 0, apply_to: ['string', 'number', 'datetime']},
             {type: 'is_not_null',      value: '!?',      accept_values: 0, apply_to: ['string', 'number', 'datetime']}
         ],
@@ -684,6 +688,7 @@
             var $ruleInput = $(this.getRuleInput($rule.attr('id'), filter, i));
             if (i > 0) $valueContainer.append(' , ');
             $valueContainer.append($ruleInput);
+            if (i > 0 && filter.example) $valueContainer.append(' Before means older, after means more recent' );
             $inputs = $inputs.add($ruleInput);
         }
 
@@ -1416,6 +1421,11 @@
                         h+= '<input type="text" name="'+ name +'"';
                         if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
                         h+= '>';
+                        console.log(filter.example);
+                        if (filter.example) {
+                          h+="fooba";
+                          console.log("fooba");
+                        }
                 }
         }
 
