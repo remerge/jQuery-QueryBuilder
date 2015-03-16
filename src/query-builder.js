@@ -1421,11 +1421,6 @@
                         h+= '<input type="text" name="'+ name +'"';
                         if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
                         h+= '>';
-                        console.log(filter.example);
-                        if (filter.example) {
-                          h+="fooba";
-                          console.log("fooba");
-                        }
                 }
         }
 
