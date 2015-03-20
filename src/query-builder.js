@@ -479,8 +479,13 @@
             if (!filter.type) {
                 $.error('Missing filter type: '+ filter.id);
             }
+
             if (types.indexOf(filter.type) == -1) {
                 $.error('Invalid type: '+ filter.type);
+            }
+
+            if (!filter.type2) {
+                filter.type2 = filter.type;
             }
 
             if (!filter.lftHandType) {
@@ -521,7 +526,6 @@
                     filter.internalType = 'string';
                     break;
             }
-
             switch (filter.input) {
                 case 'radio': case 'checkbox':
                     if (!filter.values || filter.values.length < 1) {
@@ -675,7 +679,9 @@
         if (filter === null) {
             return;
         }
-
+        if (filter.input2 === null) {
+            filter.input2 = filter.input;
+        }
         var operator = this.getOperatorByType(this.getRuleOperator($rule));
 
         if (operator.accept_values === 0) {
@@ -686,9 +692,8 @@
 
         for (var i=0; i<operator.accept_values; i++) {
             var $ruleInput = $(this.getRuleInput($rule.attr('id'), filter, i));
-            if (i > 0) $valueContainer.append(' , ');
             $valueContainer.append($ruleInput);
-            if (i > 0 && filter.example) $valueContainer.append(' Before means older, after means more recent' );
+            if (i+1 == operator.accept_values && filter.hint) $valueContainer.append(filter.hint);
             $inputs = $inputs.add($ruleInput);
         }
 
@@ -1380,50 +1385,96 @@
         var validation = filter.validation || {},
             name = rule_id +'_value_'+ value_id,
             h = '', c;
+        if (value_id == 0 || filter.input2 === null) {
+            switch (filter.input) {
+                case 'radio':
+                    c = filter.vertical ? ' class=block' : '';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<label'+ c +'><input type="radio" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
+                    });
+                    break;
 
-        switch (filter.input) {
-            case 'radio':
-                c = filter.vertical ? ' class=block' : '';
-                iterateOptions(filter.values, function(key, val) {
-                    h+= '<label'+ c +'><input type="radio" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
-                });
-                break;
+                case 'checkbox':
+                    c = filter.vertical ? ' class=block' : '';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<label'+ c +'><input type="checkbox" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
+                    });
+                    break;
 
-            case 'checkbox':
-                c = filter.vertical ? ' class=block' : '';
-                iterateOptions(filter.values, function(key, val) {
-                    h+= '<label'+ c +'><input type="checkbox" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
-                });
-                break;
+                case 'select':
+                    h+= '<select name="'+ name +'"'+ (filter.multiple ? ' multiple' : '') +'>';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<option value="'+ key +'"> '+ val +'</option> ';
+                    });
+                    h+= '</select>';
+                    break;
 
-            case 'select':
-                h+= '<select name="'+ name +'"'+ (filter.multiple ? ' multiple' : '') +'>';
-                iterateOptions(filter.values, function(key, val) {
-                    h+= '<option value="'+ key +'"> '+ val +'</option> ';
-                });
-                h+= '</select>';
-                break;
+                /* falls through */
+                case 'text': default:
+                    switch (filter.internalType) {
+                        case 'number': case 'duration':
+                            h+= '<input type="number" name="'+ name +'"';
+                            if (validation.step) h+= ' step="'+ validation.step +'"';
+                            if (validation.min) h+= ' min="'+ validation.min +'"';
+                            if (validation.max) h+= ' max="'+ validation.max +'"';
+                            if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
+                            h+= '>';
+                            break;
 
-            /* falls through */
-            case 'text': default:
-                switch (filter.internalType) {
-                    case 'number':
-                        h+= '<input type="number" name="'+ name +'"';
-                        if (validation.step) h+= ' step="'+ validation.step +'"';
-                        if (validation.min) h+= ' min="'+ validation.min +'"';
-                        if (validation.max) h+= ' max="'+ validation.max +'"';
-                        if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
-                        h+= '>';
-                        break;
-
-                    /* falls through */
-                    case 'datetime': case 'text': default:
-                        h+= '<input type="text" name="'+ name +'"';
-                        if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
-                        h+= '>';
-                }
+                        /* falls through */
+                        case 'datetime': case 'text': default:
+                            h+= '<input type="text" name="'+ name +'"';
+                            if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
+                            h+= '>';
+                    }
+            }
         }
+        else{
+            console.log("muchtel");
+            switch (filter.input2) {
+                case 'radio':
+                    c = filter.vertical ? ' class=block' : '';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<label'+ c +'><input type="radio" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
+                    });
+                    break;
 
+                case 'checkbox':
+                    c = filter.vertical ? ' class=block' : '';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<label'+ c +'><input type="checkbox" name="'+ name +'" value="'+ key +'"> '+ val +'</label> ';
+                    });
+                    break;
+
+                case 'select':
+                    h+= '<select name="'+ name +'"'+ (filter.multiple ? ' multiple' : '') +'>';
+                    iterateOptions(filter.values, function(key, val) {
+                        h+= '<option value="'+ key +'"> '+ val +'</option> ';
+                    });
+                    h+= '</select>';
+                    break;
+
+                /* falls through */
+                case 'text': default:
+                    switch (filter.internalType) {
+                        case 'number': case 'duration':
+
+                            h+= '<input type="number" name="'+ name +'"';
+                            if (validation.step) h+= ' step="'+ validation.step +'"';
+                            if (validation.min) h+= ' min="'+ validation.min +'"';
+                            if (validation.max) h+= ' max="'+ validation.max +'"';
+                            if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
+                            h+= '>';
+                            break;
+
+                        /* falls through */
+                        case 'datetime': case 'text': default:
+                            h+= '<input type="text" name="'+ name +'"';
+                            if (filter.placeholder) h+= ' placeholder="'+ filter.placeholder +'"';
+                            h+= '>';
+                    }
+            }
+        }
         return h;
     };
 
