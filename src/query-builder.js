@@ -139,7 +139,8 @@
             operator_is_null: 'is null',
             operator_is_not_null: 'is not null',
             operator_listed: 'in',
-            operator_not_listed: 'not in'
+            operator_not_listed: 'not in',
+            operator_regex:'regex'
         },
 
         operators: [
@@ -157,6 +158,7 @@
             {type: 'greater_or_equal', value: '>=',      accept_values: 1, apply_to: ['number']},
             {type: 'between',          value: '<>',      accept_values: 2, apply_to: ['number', 'datetime']},
             {type: 'match',            value: '<>',      accept_values: 2, apply_to: ['string']},
+            {type: 'regex',            value: '~',       accept_values: 2, apply_to: ['string']},
             {type: 'no_match',         value: '!<>',     accept_values: 2, apply_to: ['string']},
             {type: 'begins_with',      value: '^',       accept_values: 1, apply_to: ['string']},
             {type: 'not_begins_with',  value: '!^',      accept_values: 1, apply_to: ['string']},
