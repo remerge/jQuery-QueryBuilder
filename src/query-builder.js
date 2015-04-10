@@ -24,6 +24,7 @@
             'datetime',
             'money',
             'duration',
+            'user_audience_attribute_duration',
             'dynamic'
         ],
         internalTypes = [
@@ -524,7 +525,7 @@
                 case 'money':
                     filter.internalType = 'number';
                     break;
-                case 'duration':
+                case 'duration': case 'user_audience_attribute_duration':
                     filter.internalType = 'string';
                     break;
             }
@@ -1432,7 +1433,6 @@
             }
         }
         else{
-            console.log("muchtel");
             switch (filter.input2) {
                 case 'radio':
                     c = filter.vertical ? ' class=block' : '';
